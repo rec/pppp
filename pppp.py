@@ -143,7 +143,9 @@ def _help(command):
             .replace(',', '')
         ).lstrip()
         _perr('pppp', c, sig)
-        _perr('   ', method.__doc__)
+        for line in method.__doc__.splitlines():
+            _perr('   ', line.replace(11 * ' ', ''))
+        _perr()
 
 
 if __name__ == '__main__':
