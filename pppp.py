@@ -42,11 +42,9 @@ def pppp(*args):
 
     else:
         try:
-            result = getattr(Projects(), command or DEFAULT_COMMAND)(*commands)
+            getattr(Projects(), command or DEFAULT_COMMAND)(*commands)
         except Exception as e:
             _perr('ERROR', e)
-            result = None
-        print(result or os.getcwd())
 
 
 class Projects:
@@ -62,7 +60,7 @@ class Projects:
     def goto(self, position=0):
         """Go right to a project at a specific position or by default the top
            project."""
-        return self.projects and self.projects[self._to_pos(position)]
+        print(self.projects and self.projects[self._to_pos(position)])
 
     def rotate(self, steps=1):
         """Rotate the list of project directories in a cycle for one or more
@@ -70,7 +68,7 @@ class Projects:
         steps = self._to_pos(steps)
         self.projects = self.projects[steps:] + self.projects[:steps]
         self._write()
-        return self.goto()
+        self.goto()
 
     def push(self, project=None, position=0):
         """Push a project directory into the project list.
@@ -86,7 +84,7 @@ class Projects:
 
         self.projects.insert(self._to_pos(position), project)
         self._write()
-        return self.goto()
+        self.goto()
 
     def pop(self, position=0):
         """Pop and discard a project - default 0 means the most recent one"""
