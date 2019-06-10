@@ -1,0 +1,9 @@
+pppp() {{
+    DIR=`python - $@ <<'___EOF'
+{0}
+___EOF`
+    if [ $DIR ] ; then
+        echo "--> $DIR"
+        cd $DIR
+    fi
+}}
