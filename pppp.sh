@@ -1,15 +1,19 @@
 # In your .bashrc, source this file to add a bash function `pppp`.
+#
 # For more information, type `pppp -h` or `pppp --help`
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-06-27 at 17:29:40 by _write_pppp_bash.py
+# Automatically generated on 2019-06-27 at 19:21:48 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
     DIR=`python - $@ <<'___EOF'
 
 """
+
+pppp: Pico Push Pop Project
+
 Keep a persistent stack of working project directories
 """
 
@@ -81,13 +85,13 @@ def pppp(*args):
         try:
             getattr(Projects(), command or DEFAULT_COMMAND)(*commands)
         except Exception as e:
-            _pexit('Exception', e)
+            _pexit('pppp: ERROR:', e)
 
 
 class Projects:
     def __init__(self):
         cf = os.environ.get('XDG_CONFIG_HOME', '$HOME/.config')
-        config_dir = Path(os.path.expandvars(cf)).expanduser()
+        config_dir = _expand(cf)
         self._config_file = config_dir / '.pppp.json'
 
         # self._projects is a stack, with the top element at 0.
@@ -102,19 +106,32 @@ class Projects:
         """Clears the list of projects"""
         self._projects.clear()
         self._write()
-        _perr('Cleared')
+        _perr('pppp: Cleared')
         _perr()
         self.list()
 
     def goto(self, position=0):
         """Go right to a project at a specific position or by default the top
            project."""
-        print(self._projects and self._projects[self._to_pos(position)])
+        self._goto(position)
+
+    def _goto(self, position, report_no_change=True):
+        """Go right to a project at a specific position or by default the top
+           project."""
+        if self._projects:
+            next_project = self._projects[self._to_pos(position)]
+            if next_project != os.getcwd():
+                print(next_project)
+                _perr('pppp:', next_project)
+                return
+
+        if report_no_change:
+            _perr('pppp: (no change)')
 
     def list(self):
         """Lists all the projects in order"""
         if not self._projects:
-            _perr('(no projects)')
+            _perr('pppp: (no projects)')
 
         for i, p in enumerate(self._projects):
             _perr('%d: %s' % (i, p))
@@ -122,31 +139,29 @@ class Projects:
     def pop(self, position=0):
         """Pop and discard a project"""
         if not self._projects:
-            _pexit('No projects to pop!')
+            _pexit('pppp: ERROR: No projects to pop!')
 
-        _perr('Popped', self._projects.pop(self._to_pos(position)))
+        _perr('pppp: Popped', self._projects.pop(self._to_pos(position)))
         self._write()
-        self._projects and self.goto()
+        (not position) and self._projects and self.goto(0)
         self.list()
 
     def push(self, project=None):
         """Push a project directory into the project list.
 
-           If no directory is specified, the current directory is used.
-           """
-
-        project = Path(os.path.expandvars(project or os.getcwd())).expanduser()
+           If no directory is specified, the current directory is used."""
+        project = _expand(project)
         if not project.exists():
             raise ValueError('Directory %s does not exist' % project)
         if not project.is_dir():
             raise ValueError('%s is not a directory' % project)
-        project = str(project.absolute())
+        project = str(project)
         if project in self._projects:
             raise ValueError('Cannot insert the same project twice')
 
         self._projects.insert(0, project)
         self._write()
-        self.goto()
+        self._goto(0, report_no_change=False)
 
     def rotate(self, steps=1):
         """Rotate the list of project directories in a cycle
@@ -167,7 +182,7 @@ class Projects:
         """Undoes the previous change to the projects list"""
         self._projects = self._undo
         self._write()
-        _perr('Undo!')
+        _perr('pppp: Undo!')
         _perr()
         self.list()
 
@@ -189,7 +204,13 @@ class Projects:
         pos, lp = int(pos), len(self._projects)
         if -lp <= pos < lp:
             return pos
-        raise IndexError('list index %d out of range' % pos)
+        raise IndexError(
+            'Project index %d out of range [0, %d]' % (pos, lp -1)
+        )
+
+
+def _expand(p):
+    return Path(os.path.expandvars(p or os.getcwd())).expanduser().absolute()
 
 
 def _perr(*args, **kwds):

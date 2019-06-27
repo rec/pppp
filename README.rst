@@ -1,8 +1,9 @@
-pppp : `pico push push project`
-----------
+🍿 pppp: a tiny bash utility to manage project directories 🍿
+--------------------------------------
 
 ``pppp`` is a tiny utility for Bash that does one thing well - it keeps a
-stack of working directories across Bash shells and terminal sessions.
+persistent stack of working directories across Bash shells and terminal
+sessions.
 
 Like most people, I have many projects and subprojects working at once, and
 often I get interrupted with bug reports, requests or even sudden inspiration,
@@ -105,6 +106,6 @@ See also `this article <https://0x46.net/thoughts/2019/02/01/dotfile-madness/>`.
 Q: Why is it Python code embedded in a Bash script?  Why not just distribute
 a Python script?
 
-A: Some Bash is needed in order to change the active directory in the shell that
-you're working in.  But doing the whole thing in Bash was too hard.  And I
-feel it's much better as a single file.
+A: Pure Python cannot change the directory in your shell - some Bash is needed.
+But doing the whole thing in Bash was too hard.  I could have distributed it as
+a Python file and a small Bash file but I felt a single file was better.
