@@ -2,13 +2,27 @@
 Keep a persistent stack of working project directories
 """
 
+from pathlib import Path
 import inspect
 import json
 import os
-from pathlib import Path
 import sys
 
 DEFAULT_COMMAND = 'goto'
+VERSION = '0.9.1'
+DESCRIPTION = """pppp: Pico Push Push Project v%s
+
+A persistent stack of project directories you can push, pop, rotate, jump to a
+position in, and list.
+
+Very useful for people who get interrupted a lot.
+
+-------------------------------------------------
+
+Commands:
+
+""" % VERSION
+
 
 
 def pppp(*args):
@@ -23,12 +37,12 @@ def pppp(*args):
 
     if command.isnumeric():
         # Go to a specific position
-        commands = command, *commands
+        commands = (command, *commands)
         command = 'goto'
 
     elif '.' in command or '/' in command:
         # It's a filename you want to push
-        commands = command, *commands
+        commands = (command, *commands)
         command = 'push'
 
     elif command == 'p':
@@ -46,7 +60,7 @@ def pppp(*args):
                 _pexit('Do not understand command', command)
 
             # It's a filename
-            commands = command, *commands
+            commands = (command, *commands)
             command = 'push'
 
     if hlp:
@@ -102,7 +116,7 @@ class Projects:
 
         _perr('Popped', self._projects.pop(self._to_pos(position)))
         self._write()
-        self._projectsd and self.goto()
+        self._projects and self.goto()
         self.list()
 
     def push(self, project=None):
@@ -160,8 +174,12 @@ class Projects:
             json.dump([self._projects, self._original_projects], fp)
 
     def _to_pos(self, pos):
-        pos = -1 if pos == '-' else int(pos)
-        return (int(pos) % len(self._projects)) if self._projects else 0
+        if pos == '-':
+            return -1
+        pos, lp = int(pos), len(self._projects)
+        if -lp <= pos < lp:
+            return pos
+        raise IndexError('list index %d out of range' % pos)
 
 
 def _perr(*args, **kwds):
@@ -174,6 +192,8 @@ def _pexit(*args, **kwds):
 
 
 def _help(command):
+    if not command:
+        _perr(DESCRIPTION)
     for c in (command and [command]) or dir(Projects):
         if c.startswith('_'):
             continue
@@ -183,7 +203,7 @@ def _help(command):
             sig = inspect.signature(method)
         except Exception:
             continue
-        params = [str(p) for p in sig.parameters.values()][1:]
+        params = ['[%s]' % p for p in sig.parameters.values()][1:]
         _perr('pppp', c, *params)
         for line in method.__doc__.splitlines():
             _perr('   ', line.replace(11 * ' ', ''))

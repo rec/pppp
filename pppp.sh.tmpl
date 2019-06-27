@@ -1,7 +1,11 @@
+# This code was automatically generated
+
 pppp() {{
     DIR=`python - $@ <<'___EOF'
+
 {0}
 ___EOF`
+
     if [ $DIR ] ; then
         cd $DIR
     fi

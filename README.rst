@@ -77,12 +77,13 @@ FAQ:
 
 Q: Why ``pppp``?
 
-A: I was using it under the name ``p`` (for project) but ``pp`` and ``ppp``
-were taken.
+A: I was using it under the name ``p`` (for project) which is clearly too short
+for release - but ``pp`` and ``ppp`` were taken.
 
 Q: What new features are expected?
 
-A: None.  Barring bugfixes, I don't expect to change anything.
+A: None.  Barring bugfixes, I don't expect to change anything.  I am open to
+ideas but it feels complete to me.
 
 Q: Where does ``pppp`` store the the persistent stack?
 
@@ -91,16 +92,19 @@ A: By default, in the directory ``$HOME/.config/`` in the file file
 
 Q: What if I want to change the directory for the config file?
 
-A: Then set environment variable ``XDG_CONFIG_HOME``.
+A: Set the environment variable ``XDG_CONFIG_HOME`` to your directory.
 
-Q: Where did XDG come from?
+Q: What's this XDG thing?
 
 A: `This specification
-<https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html>`_.
+<https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html>`_
+for where your config files should go.
+
 See also `this article <https://0x46.net/thoughts/2019/02/01/dotfile-madness/>`.
 
 Q: Why is it Python code embedded in a Bash script?  Why not just distribute
 a Python script?
 
-A: A Bash script is needed in order to change the active directory in the shell
-that you're working in, and I didn't want to distribute two files.
+A: Some Bash is needed in order to change the active directory in the shell that
+you're working in.  But doing the whole thing in Bash was too hard.  And I
+feel it's much better as a single file.

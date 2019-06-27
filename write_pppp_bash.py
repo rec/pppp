@@ -3,3 +3,4 @@ if __name__ == '__main__':
     tmpl = open('pppp.sh.tmpl').read()
     with open('pppp.sh', 'w') as fp:
        fp.write(tmpl.format(pppp))
+       print('Wrote pppp.sh')
