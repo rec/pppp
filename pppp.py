@@ -1,4 +1,7 @@
 """
+
+pppp: Pico Push Pop Project
+
 Keep a persistent stack of working project directories
 """
 
@@ -10,7 +13,7 @@ import sys
 
 DEFAULT_COMMAND = 'goto'
 VERSION = '0.9.1'
-DESCRIPTION = """pppp: Pico Push Push Project v%s
+DESCRIPTION = """pppp: Pico Push Pop Project v%s
 
 A persistent stack of project directories you can push, pop, rotate, jump to a
 position in, and list.
@@ -22,7 +25,6 @@ Very useful for people who get interrupted a lot.
 Commands:
 
 """ % VERSION
-
 
 
 def pppp(*args):

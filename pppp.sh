@@ -1,4 +1,10 @@
-# This code was automatically generated
+# In your .bashrc, source this file to add a bash function `pppp`.
+# For more information, type `pppp -h` or `pppp --help`
+#
+# ------------------------------------------------------------------------
+#
+# Automatically generated on 2019-06-27 at 17:29:40 by _write_pppp_bash.py
+# from file pppp.py
 
 pppp() {
     DIR=`python - $@ <<'___EOF'
@@ -15,7 +21,7 @@ import sys
 
 DEFAULT_COMMAND = 'goto'
 VERSION = '0.9.1'
-DESCRIPTION = """pppp: Pico Push Push Project v%s
+DESCRIPTION = """pppp: Pico Push Pop Project v%s
 
 A persistent stack of project directories you can push, pop, rotate, jump to a
 position in, and list.
@@ -27,7 +33,6 @@ Very useful for people who get interrupted a lot.
 Commands:
 
 """ % VERSION
-
 
 
 def pppp(*args):

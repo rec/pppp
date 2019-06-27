@@ -1,9 +1,16 @@
-# This code was automatically generated
+# In your .bashrc, source this file to add a bash function `pppp`.
+#
+# For more information, type `pppp -h` or `pppp --help`
+#
+# ------------------------------------------------------------------------
+#
+# Automatically generated on {now:%Y-%m-%d} at {now:%H:%M:%S} by {program}
+# from file pppp.py
 
 pppp() {{
     DIR=`python - $@ <<'___EOF'
 
-{0}
+{code}
 ___EOF`
 
     if [ $DIR ] ; then
