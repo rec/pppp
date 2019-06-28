@@ -1,6 +1,6 @@
 """
 
-pppp: Pico Push Pop Project
+pppp: Project Push Pop Project
 
 Keep a persistent stack of working project directories
 """
@@ -15,24 +15,26 @@ PPPP_QUIET_ENV = 'PPPP_QUIET'
 QUIET = os.environ.get(PPPP_QUIET_ENV, '')
 CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', '$HOME/.config')
 
-DEFAULT_COMMAND = 'goto'
+COMMANDS = 'clear', 'list', 'pop', 'rotate', 'undo', 'swap'
+
 VERSION = '0.9.1'
-DESCRIPTION = """pppp: Pico Push Pop Project v%s
+DESCRIPTION = """\
+🍿 pppp: a tiny bash utility to keep a stack of project directories 🍿
+v%s
 
-A persistent stack of project directories you can push, pop, rotate, jump to a
-position in, and list.
-
+'pppp' is a persistent stack of project directories.
 Very useful for people who get interrupted a lot.
 
--------------------------------------------------
+The 'pppp' commands are %s, and %s - you only need to type the first letter.
 
-By default, pppp prints the contents of its stack after each operation.
-To turn this off, either set the environment variable PPPP_QUIET, or
-pass the -q or --quiet flag to the program.
+'pppp' with no arguments changes directory to the top of the stack.
 
-Commands:
+Passing -q or --quiet to 'pppp'  or setting the environment variable
+'PPPP_QUIET' suppresses all output except errors.
 
-""" % VERSION
+Command documentation:
+
+""" % (VERSION, ', '.join(COMMANDS[:-1]), COMMANDS[-1])
 
 
 def pppp(*args):
@@ -48,49 +50,37 @@ def pppp(*args):
             commands.append(a)
 
     command = commands and commands.pop(0) or ''
-
-    if command.isnumeric():
-        # Go to a specific position
-        commands = (command, *commands)
-        command = 'goto'
-
-    elif '.' in command or '/' in command:
-        # It's a filename you want to push
-        commands = (command, *commands)
-        command = 'push'
-
-    elif command == 'p':
-        # Disambiguate 'p' as 'push' and not 'pop'
-        command = 'push'
-
-    if command:
-        for m in dir(Projects):
-            if m.startswith(command) and not command.startswith('_'):
-                command = m
-                break
-        else:
-            p = Path(command)
-            if p.exists():
-                # It's a filename
-                commands = (command, *commands)
-                command = 'push'
-            else:
-                _pexit('Do not understand command', command)
-
+    cmd = next((c for c in COMMANDS if c.startswith(command)), None)
     if is_help:
-        _help(command)
-    else:
-        try:
-            projects = Projects(not is_quiet)
-            getattr(projects, command or DEFAULT_COMMAND)(*commands)
-        except Exception as e:
-            _pexit('pppp: ERROR:', e)
+        return _help(cmd)
+
+    projects = Projects(not is_quiet)
+
+    if not command:
+        return projects.goto()
+
+    if _is_int(command):
+        return projects.goto(command, *commands)
+
+    if Path(command).is_dir():
+        return projects.push(command, *commands)
+
+    if '.' in command or '/' in command:
+        _pexit('Directory', command, 'does not exist')
+
+    if not cmd:
+        _pexit('Do not understand command', command)
+
+    method = getattr(projects, cmd)
+    try:
+        return method(*commands)
+    except Exception as e:
+        _pexit(e)
 
 
 class Projects:
     def __init__(self, verbose):
         self._verbose = verbose
-        cf = os.environ.get('XDG_CONFIG_HOME', '$HOME/.config')
         self._config_file = _expand(CONFIG_DIR) / '.pppp.json'
 
         # self._projects is a stack, with the top element at 0.
@@ -138,18 +128,16 @@ class Projects:
             _print('pppp: Popped', popped)
             self.list()
 
-    def push(self, project=None):
-        """Push a project directory into the project list.
-
-           If no directory is specified, the current directory is used."""
+    def push(self, project):
+        """Push a project directory into the project list."""
         project = _expand(project)
         if not project.exists():
-            raise ValueError('Directory %s does not exist' % project)
+            _pexit('Directory', project, 'does not exist')
         if not project.is_dir():
-            raise ValueError('%s is not a directory' % project)
+            _pexit(project, 'is not a directory')
         project = str(project)
         if project in self._projects:
-            raise ValueError('Cannot insert the same project twice')
+            _pexit('Cannot insert the same project twice')
 
         self._projects.insert(0, project)
         self._write()
@@ -186,7 +174,7 @@ class Projects:
     def swap(self):
         """Swap the top and second from top projects"""
         if len(self._projects) < 2:
-            raise ValueError('Not enough directories to swap')
+            _pexit('Not enough directories to swap')
         self._projects[0:2] = reversed(self._projects[0:2])
 
     def _goto(self, position, report=True):
@@ -217,13 +205,19 @@ class Projects:
         pos, lp = int(pos), len(self._projects)
         if -lp <= pos < lp:
             return pos
-        raise IndexError(
-            'Project index %d out of range [0, %d]' % (pos, lp -1)
-        )
+        _pexit('Project index', pos, 'out of range [0, %d]' % (lp - 1))
 
 
 def _expand(p):
     return Path(os.path.expandvars(p or os.getcwd())).expanduser().absolute()
+
+
+def _is_int(c):
+    try:
+        int(c)
+        return True
+    except Exception:
+        return False
 
 
 def _print(*args):
@@ -231,7 +225,7 @@ def _print(*args):
 
 
 def _pexit(*args):
-    _print(*args)
+    _print('ERROR: pppp:', *args)
     sys.exit(-1)
 
 

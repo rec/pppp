@@ -27,8 +27,8 @@ to define the Bash function ``pppp``.
 -------------------
 
 * ``pppp`` without arguments changes directory to the top of the stack
+* ``pppp #`` where # is a number goes to that
 * ``pppp <dir>`` pushes ``<dir>`` on top of the stack
-* ``pppp push`` or ``pppp p`` pushes the current directory on the stack
 * ``pppp pop`` pops the top directory off the stack
 * ``pppp pop <n>`` pops just the <n>th directory from the stack
 * ``pppp list`` or ``pppp l`` lists the stack
@@ -63,13 +63,13 @@ My ``pppp`` workflow
 * When I get a new project I use ``p <dirname>`` to start work on it as my new
   top project, pushing the previous one down a level.
 
-* Later I use ``p pop`` to go back to the previous project, if the new project
+* Later I use ``p p`` (pop) to go back to the previous project, if the new project
   is finished.
 
 * Or if it is not, I use ``p r`` (rotate) to rotate the new project to the
   bottom and go back to the previous project.
 
-* I use ``p pop -1`` to pop my oldest task, when I'm cleaning up clutter.
+* I use ``p p -1`` to pop my oldest task, when I'm cleaning up clutter.
 
 * When I'm working with two directories I push them both and then use ``p s``
   (swap) to move back and forth.
@@ -82,8 +82,8 @@ FAQ:
 
 Q: Why ``pppp``?
 
-A: I was using it under the name ``p`` (for project) which is clearly too short
-for release - but ``pp`` and ``ppp`` were taken.
+A: It's a Project to Push and Pop other Projects.  Also, I use ``p`` as a
+shortcut but ``p``, ``pp``, and ``ppp`` are too short or already taken.
 
 Q: What new features are expected?
 
@@ -107,9 +107,16 @@ for where your config files should go.
 
 See also `this article <https://0x46.net/thoughts/2019/02/01/dotfile-madness/>`.
 
-Q: Why is it Python code embedded in a Bash script?  Why not just distribute
-a Python script?
+Q: Why is there Python code embedded in a Bash script?  Why the Makefile and the
+build step?  Why not just distribute a Python script?
 
 A: Pure Python cannot change the directory in your shell - some Bash is needed.
-But doing the whole thing in Bash was too hard.  I could have distributed it as
-a Python file and a small Bash file but I felt a single file was better.
+But doing the whole thing in Bash was too hard.
+
+I could have distributed it as a Python file and a small Bash file but I felt a
+single file was better for everyone, even though it requires a build step (for
+developers only of course).
+
+See also `this discussion
+<https://stackoverflow.com/questions/2375003/how-do-i-set-the-working-directory-of-the-parent-process>`_
+which seems to show that no better way is possible.
