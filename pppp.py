@@ -15,7 +15,7 @@ PPPP_QUIET_ENV = 'PPPP_QUIET'
 QUIET = os.environ.get(PPPP_QUIET_ENV, '')
 CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', '$HOME/.config')
 
-COMMANDS = 'clear', 'list', 'pop', 'rotate', 'undo', 'swap'
+COMMANDS = 'cd', 'clear', 'list', 'pop', 'push', 'rotate', 'swap', 'undo'
 
 VERSION = '0.9.1'
 DESCRIPTION = """\
@@ -57,10 +57,10 @@ def pppp(*args):
     projects = Projects(not is_quiet)
 
     if not command:
-        return projects.goto()
+        return projects.cd()
 
     if _is_int(command):
-        return projects.goto(command, *commands)
+        return projects.cd(command, *commands)
 
     if Path(command).is_dir():
         return projects.push(command, *commands)
@@ -100,10 +100,10 @@ class Projects:
             _print()
             self.list()
 
-    def goto(self, position=0):
+    def cd(self, position=0):
         """Go right to a project at a specific position or by default the top
            project."""
-        self._goto(position)
+        self._cd(position)
 
     def list(self):
         """Lists all the projects in order"""
@@ -122,7 +122,7 @@ class Projects:
         popped = self._projects.pop(self._to_pos(position))
         self._write()
         if self._projects and not position:
-            self._goto(0, False)
+            self._cd(0, False)
 
         if self._verbose:
             _print('pppp: Popped', popped)
@@ -141,7 +141,7 @@ class Projects:
 
         self._projects.insert(0, project)
         self._write()
-        self._goto(0, False)
+        self._cd(0, False)
         if self._verbose:
             _print('pppp: Pushed', project)
             self.list()
@@ -158,7 +158,7 @@ class Projects:
         steps = self._to_pos(steps)
         self._projects = self._projects[steps:] + self._projects[:steps]
         self._write()
-        self.goto()
+        self.cd()
         if self._verbose:
             self.list()
 
@@ -177,7 +177,7 @@ class Projects:
             _pexit('Not enough directories to swap')
         self._projects[0:2] = reversed(self._projects[0:2])
 
-    def _goto(self, position, report=True):
+    def _cd(self, position, report=True):
         """Go right to a project at a specific position or by default the top
            project."""
         change = False
