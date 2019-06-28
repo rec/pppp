@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-06-27 at 19:21:48 by _write_pppp_bash.py
+# Automatically generated on 2019-06-28 at 11:57:08 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -23,6 +23,10 @@ import json
 import os
 import sys
 
+PPPP_QUIET_ENV = 'PPPP_QUIET'
+QUIET = os.environ.get(PPPP_QUIET_ENV, '')
+CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', '$HOME/.config')
+
 DEFAULT_COMMAND = 'goto'
 VERSION = '0.9.1'
 DESCRIPTION = """pppp: Pico Push Pop Project v%s
@@ -34,20 +38,28 @@ Very useful for people who get interrupted a lot.
 
 -------------------------------------------------
 
+By default, pppp prints the contents of its stack after each operation.
+To turn this off, either set the environment variable PPPP_QUIET, or
+pass the -q or --quiet flag to the program.
+
 Commands:
 
 """ % VERSION
 
 
 def pppp(*args):
-    commands, hlp = [], []
+    commands = []
+    is_help = False
+    is_quiet = QUIET
     for a in args:
-        (commands, hlp)[a in ('--help', '-h')].append(a)
+        if a in ('--help', '-h'):
+            is_help = True
+        elif a in ('--quiet', '-q'):
+            is_quiet = True
+        else:
+            commands.append(a)
 
     command = commands and commands.pop(0) or ''
-
-    if command.startswith('_'):
-        _pexit('Do not understand command', command)
 
     if command.isnumeric():
         # Go to a specific position
@@ -65,34 +77,33 @@ def pppp(*args):
 
     if command:
         for m in dir(Projects):
-            if m.startswith(command):
+            if m.startswith(command) and not command.startswith('_'):
                 command = m
                 break
         else:
             p = Path(command)
-            if not p.exists():
+            if p.exists():
+                # It's a filename
+                commands = (command, *commands)
+                command = 'push'
+            else:
                 _pexit('Do not understand command', command)
 
-            # It's a filename
-            commands = (command, *commands)
-            command = 'push'
-
-    if hlp:
+    if is_help:
         _help(command)
-        return 0
-
     else:
         try:
-            getattr(Projects(), command or DEFAULT_COMMAND)(*commands)
+            projects = Projects(not is_quiet)
+            getattr(projects, command or DEFAULT_COMMAND)(*commands)
         except Exception as e:
             _pexit('pppp: ERROR:', e)
 
 
 class Projects:
-    def __init__(self):
+    def __init__(self, verbose):
+        self._verbose = verbose
         cf = os.environ.get('XDG_CONFIG_HOME', '$HOME/.config')
-        config_dir = _expand(cf)
-        self._config_file = config_dir / '.pppp.json'
+        self._config_file = _expand(CONFIG_DIR) / '.pppp.json'
 
         # self._projects is a stack, with the top element at 0.
         try:
@@ -106,45 +117,38 @@ class Projects:
         """Clears the list of projects"""
         self._projects.clear()
         self._write()
-        _perr('pppp: Cleared')
-        _perr()
-        self.list()
+        if self._verbose:
+            _print('pppp: Cleared')
+            _print()
+            self.list()
 
     def goto(self, position=0):
         """Go right to a project at a specific position or by default the top
            project."""
         self._goto(position)
 
-    def _goto(self, position, report_no_change=True):
-        """Go right to a project at a specific position or by default the top
-           project."""
-        if self._projects:
-            next_project = self._projects[self._to_pos(position)]
-            if next_project != os.getcwd():
-                print(next_project)
-                _perr('pppp:', next_project)
-                return
-
-        if report_no_change:
-            _perr('pppp: (no change)')
-
     def list(self):
         """Lists all the projects in order"""
         if not self._projects:
-            _perr('pppp: (no projects)')
+            if self._verbose:
+                _print('pppp: (no projects)')
 
         for i, p in enumerate(self._projects):
-            _perr('%d: %s' % (i, p))
+            _print('%d: %s' % (i, p))
 
     def pop(self, position=0):
         """Pop and discard a project"""
         if not self._projects:
             _pexit('pppp: ERROR: No projects to pop!')
 
-        _perr('pppp: Popped', self._projects.pop(self._to_pos(position)))
+        popped = self._projects.pop(self._to_pos(position))
         self._write()
-        (not position) and self._projects and self.goto(0)
-        self.list()
+        if self._projects and not position:
+            self._goto(0, False)
+
+        if self._verbose:
+            _print('pppp: Popped', popped)
+            self.list()
 
     def push(self, project=None):
         """Push a project directory into the project list.
@@ -161,7 +165,10 @@ class Projects:
 
         self._projects.insert(0, project)
         self._write()
-        self._goto(0, report_no_change=False)
+        self._goto(0, False)
+        if self._verbose:
+            _print('pppp: Pushed', project)
+            self.list()
 
     def rotate(self, steps=1):
         """Rotate the list of project directories in a cycle
@@ -176,22 +183,40 @@ class Projects:
         self._projects = self._projects[steps:] + self._projects[:steps]
         self._write()
         self.goto()
-        self.list()
+        if self._verbose:
+            self.list()
 
     def undo(self):
         """Undoes the previous change to the projects list"""
         self._projects = self._undo
         self._write()
-        _perr('pppp: Undo!')
-        _perr()
-        self.list()
+        if self._verbose:
+            _print('pppp: Undo!')
+            _print()
+            self.list()
 
     def swap(self):
         """Swap the top and second from top projects"""
         if len(self._projects) < 2:
             raise ValueError('Not enough directories to swap')
         self._projects[0:2] = reversed(self._projects[0:2])
-        self.list()
+
+    def _goto(self, position, report=True):
+        """Go right to a project at a specific position or by default the top
+           project."""
+        change = False
+        if self._projects:
+            next_project = self._projects[self._to_pos(position)]
+            if next_project != os.getcwd():
+                print(next_project)
+                change = True
+
+        if self._verbose:
+            if change:
+                if report:
+                    _print('pppp:', next_project)
+            elif report:
+                _print('pppp: (no change)')
 
     def _write(self):
         self._config_file.parent.mkdir(parents=True, exist_ok=True)
@@ -213,18 +238,18 @@ def _expand(p):
     return Path(os.path.expandvars(p or os.getcwd())).expanduser().absolute()
 
 
-def _perr(*args, **kwds):
-    print(*args, **kwds, file=sys.stderr)
+def _print(*args):
+    print(*args, file=sys.stderr)
 
 
-def _pexit(*args, **kwds):
-    _perr(*args, **kwds)
+def _pexit(*args):
+    _print(*args)
     sys.exit(-1)
 
 
 def _help(command):
     if not command:
-        _perr(DESCRIPTION)
+        _print(DESCRIPTION)
     for c in (command and [command]) or dir(Projects):
         if c.startswith('_'):
             continue
@@ -235,10 +260,10 @@ def _help(command):
         except Exception:
             continue
         params = ['[%s]' % p for p in sig.parameters.values()][1:]
-        _perr('pppp', c, *params)
+        _print('pppp', c, *params)
         for line in method.__doc__.splitlines():
-            _perr('   ', line.replace(11 * ' ', ''))
-        _perr()
+            _print('   ', line.replace(11 * ' ', ''))
+        _print()
 
 
 if __name__ == '__main__':

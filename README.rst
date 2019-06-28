@@ -34,10 +34,10 @@ to define the Bash function ``pppp``.
 * ``pppp list`` or ``pppp l`` lists the stack
 * ``pppp clear`` clears it
 * ``pppp swap`` or ``pppp s`` swaps the top and second directories
-* ``pppp rotate`` or ``pppp r`` rotates the stack one step forward so the top is now
-  at the bottom
-* ``pppp rotate -1`` or ``pppp r -1`` rotates the stack one step backward bringing
-  the bottom back to the top
+* ``pppp rotate`` or ``pppp r`` rotates the stack one step forward so the top is
+  now at the bottom
+* ``pppp rotate -1`` or ``pppp r -`` rotates the stack one step backward
+  bringing the bottom back to the top
 * ``pppp undo`` or ``pppp u`` undoes the previous operation
 
 With the exception of ``pppp list``, which has no side effects, each command
@@ -46,6 +46,10 @@ there's an error (like trying to push a non-existent directory).
 
 If you want to jump back to the directory you were in before you typed ``pppp``,
 use ``cd -``.
+
+By default, ``pppp`` prints what it has done, and prints the whole stack every
+time it changes.  You can disable that by either passing in the
+``-q``/``--quiet`` flag, or setting the ``PPPP_QUIET`` environment variable.
 
 
 My ``pppp`` workflow
