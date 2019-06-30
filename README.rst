@@ -3,7 +3,7 @@
 
 Do you type ``cd`` a lot?
 
-``pppp`` is a tiny utility for Bash that does one thing well - it keeps a
+pppp is a tiny utility for Bash that does one thing well - it keeps a
 persistent stack of working directories across Bash shells and terminal
 sessions.
 
@@ -12,7 +12,9 @@ I often get interrupted with bug reports, requests or sudden inspiration, and
 even get interrupted during interruptions, so I'm constantly moving between
 multiple terminal windows and forgetting where I was.
 
-``pppp`` saves me minutes a day, reminds of where I was when I get interrupted,
+You can learn it in two minutes and it has copious documentation.
+
+pppp saves me minutes a day, reminds of where I was when I get interrupted,
 and never gets in my way.
 
 Installation
@@ -23,75 +25,127 @@ Download the file
 and save it somewhere convenient.
 
 Then in your .bashrc, add a line ``source /path/to/your/pppp.sh`` to define the
-Bash function ``pppp``. I am lazy and add an alias ``alias p=pppp`` to avoid
-typing.
+Bash function ``pppp``. Many users add ``alias p=pppp``, and the documentation
+below assumes that.
 
 
 ``pppp`` Commands
 -------------------
 
-Commands can be abbreviated down to a single character, so ``pppp rotate``,
-``pppp rot`` and ``pppp r`` all mean the same thing.
+Commands can be abbreviated down to a single character, so ``p rotate``,
+``p rot`` and ``p r`` all mean the same thing.
 
 "cd" is short for "change the current working directory in the shell".
 
 Push
 ==========
-* ``pppp <directory>``: Push ``<directory>`` onto the stack and cd to it
-* ``pppp push <directory>``: (Same)
+* ``p <directory>``
+* ``p push <directory>``
+
+  Push ``<directory>`` onto the stack and cd to it
+
 
 
 Pop
 ==========
-* ``pppp pop``: Pop the top directory off the stack and cd to the new top
-* ``pppp pop <n>``: Pop the <n>th directory, but do not cd
 
+* ``p pop``
 
-Housekeeping: list, clear, undo
-==================================
-* ``pppp list``: Lists the stack
-* ``pppp clear``: Clears the stack
-* ``pppp undo``: Undoes the previous change to the stack and cds to the top of it
+  Pop the top directory off the stack and cd to the new top
+
+* ``p pop <n>``
+
+  Pop the <n>th directory, but do not cd
 
 
 Change directory
 ==================
 
-These commands don't change the stack, only the current directory
+These commands don't change the stack, only the current directory.
 
-* ``pppp``: cd to the top of the stack. By far the most commonly used command.
-* ``pppp 0``: (Same)
-* ``pppp 1``: cd to the first directory below the top of the stack
-* ``pppp 2``: cd to the second directory below the top of the stack
-* ``pppp <n>``: cd to the nth directory below the top of the stack
-* ``pppp -1``: cd to the directory at the bottom of the stack
-* ``pppp -2``: cd to the directory one above the bottom of the stack
-* ``pppp -<n>``: cd to the directory n-1 above the bottom of the stack
+* ``p``
+* ``p 0``
 
 
-Reorder
-==================
+  cd to the top of the stack. By far the most commonly used command.
+
+* ``p 1``
+* ``p 2``
+* ``p <n>``
+
+  cd to the first, second or nth  below the top of the stack
+
+* ``p -1``
+* ``p -2``
+* ``p -<n>``
+
+  cd to directories at the bottom of the stack
+
+
+Reordering the stack: swap and rotate
+=======================
 
 These commands change the stack, and then cd to its top
 
-* ``pppp swap``: Swaps the top two directories
-* ``pppp rotate``: Rotates the stack one step so the top moves to the bottom
-* ``pppp rotate 1``: (Same)
-* ``pppp rotate 1``: Rotates the stack two steps forward
-* ``pppp rotate -1``: Rotates the stack one step backward
-* ``pppp rotate -``: (Same)
-* ``pppp rotate -1``: Rotates the stack two steps backward
-* ``pppp rotate 0``: (Does nothing)
+* ``p swap``
+* ``p s``
 
-If you want to jump back to the directory you were in before you typed ``pppp``,
+  Swap the top two directories in the stack
+
+------
+
+* ``p rotate 1``
+* ``p rotate``
+* ``p rot``
+* ``p r``
+
+  Rotates the whole stack forward so the top moves to the bottom
+
+* ``p rot 2``
+
+  Rotates the stack two steps forward
+
+* ``p rot -1``
+* ``p rot -``
+
+  Rotates the stack one step backward so the bottom moves to the top
+
+* ``p rot -3``
+
+  Rotates the stack two steps backward
+
+* ``p rot 0``
+
+  (Does nothing)
+
+
+Housekeeping: list, clear, undo
+==================================
+
+* ``p list``
+
+  Lists the stack
+
+* ``p clear``
+
+  Clears the stack
+
+* ``p undo``
+
+  Undoes the previous change to the stack and cds to the top of it
+
+TIPS:
+-----------
+
+If you want to jump back to the directory you were in before you typed ``p``,
 use ``cd -``.
 
-By default, ``pppp``: prints what it has done, and prints the whole stack every
+By default, pppp prints what it has done, and prints the whole stack every
 time it changes.  You can disable that by either passing in the
 ``-q``/``--quiet`` flag, or setting the ``PPPP_QUIET`` environment variable.
 
 
-My ``pppp`` workflow
+My ``p`` workflow
 -------------------------------
 
 * I alias ``pppp`` to ``p`` to avoid typing.
@@ -102,13 +156,13 @@ My ``pppp`` workflow
 * When I get a new project I use ``p <dirname>`` to start work on it as my new
   top project, pushing the previous one down a level.
 
-* Later I use ``p p`` (pop) to cd back to the previous project, if the new project
-  is finished.
+* Later I use ``p p`` (pop) to cd back to the previous project, if the new
+  project is finished.
 
 * Or if it is not, I use ``p r`` (rotate) to rotate the new project to the
   bottom and cd back to the previous project.
 
-* I use ``p p -1`` (pop) to pop my oldest task, when I'm cleaning up clutter.
+* When I'm cleaning up clutter. I use ``p p -1`` (pop) to pop my oldest task
 
 * When I'm working with two directories I push them both and then use ``p s``
   (swap) to move back and forth.

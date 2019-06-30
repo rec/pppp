@@ -32,6 +32,8 @@ The 'pppp' commands are %s, and %s - you only need to type the first letter.
 Passing -q or --quiet to 'pppp'  or setting the environment variable
 'PPPP_QUIET' suppresses all output except errors.
 
+More help is available here:  https://github.com/rec/pppp
+
 Command documentation:
 
 """ % (VERSION, ', '.join(COMMANDS[:-1]), COMMANDS[-1])
