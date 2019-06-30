@@ -17,7 +17,7 @@ CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', '$HOME/.config')
 
 COMMANDS = 'cd', 'clear', 'list', 'pop', 'push', 'rotate', 'swap', 'undo'
 
-VERSION = '0.9.1'
+VERSION = '0.9.2'
 DESCRIPTION = """\
 🍿 pppp: a tiny bash utility to keep a stack of project directories 🍿
 v%s
