@@ -1,21 +1,21 @@
 🍿 pppp: a tiny bash utility to manage project directories 🍿
 --------------------------------------
 
-Do you type ``cd`` a lot?
+Do you frequently type ``cd``?  Do you often switch between different
+projects several times a day?  Then pppp is for you.
 
-pppp is a tiny utility for Bash that does one thing well - it keeps a
-persistent stack of working directories across Bash shells and terminal
-sessions.
+pppp is a tiny utility for Bash that does one thing well - it keeps a stack of
+working directories across Bash shells and terminal sessions.
 
 Like many programmers, I have many projects and subprojects working at once, and
 I often get interrupted with bug reports, requests or sudden inspiration, and
 even get interrupted during interruptions, so I'm constantly moving between
 multiple terminal windows and forgetting where I was.
 
-You can learn it in two minutes and it has copious documentation.
+You can learn pppp in two minutes and it has copious documentation.
 
-pppp saves me minutes a day, reminds of where I was when I get interrupted,
-and never gets in my way.
+pppp saves me minutes a day, reminds of where I was when I get interrupted, and
+never gets in my way.
 
 Installation
 ---------------
@@ -45,41 +45,43 @@ Push
   Push ``<directory>`` onto the stack and cd to it
 
 
-
-Pop
-==========
-
-* ``p pop``
-
-  Pop the top directory off the stack and cd to the new top
-
-* ``p pop <n>``
-
-  Pop the <n>th directory, but do not cd
-
-
 Change directory
 ==================
 
-These commands don't change the stack, only the current directory.
+The change directory commands don't change the stack, only the current
+directory.
 
 * ``p``
 * ``p 0``
+* ``p cd 0``
 
-
-  cd to the top of the stack. By far the most commonly used command.
+  cd to the top of the stack, or print the stack if you are already there.
 
 * ``p 1``
 * ``p 2``
 * ``p <n>``
 
-  cd to the first, second or nth  below the top of the stack
+  cd to the first, second or nth below the top of the stack
 
 * ``p -1``
 * ``p -2``
 * ``p -<n>``
 
   cd to directories at the bottom of the stack
+
+
+Pop
+==========
+
+* ``p pop``
+* ``p pop 0``
+* ``p p``
+
+  Pop the top directory off the stack and cd to the new top
+
+* ``p pop <n>``
+
+  Pop the <n>th directory.  If n is 0, cd to the new top
 
 
 Reordering the stack: swap and rotate
@@ -99,24 +101,24 @@ These commands change the stack, and then cd to its top
 * ``p rot``
 * ``p r``
 
-  Rotates the whole stack forward so the top moves to the bottom
+  Rotate the whole stack forward so the top moves to the bottom
 
 * ``p rot 2``
 
-  Rotates the stack two steps forward
+  Rotate the stack two steps forward
 
 * ``p rot -1``
 * ``p rot -``
 
-  Rotates the stack one step backward so the bottom moves to the top
+  Rotate the stack one step backward so the bottom moves to the top
 
 * ``p rot -3``
 
-  Rotates the stack two steps backward
+  Rotate the stack two steps backward
 
 * ``p rot 0``
 
-  (Does nothing)
+  Does nothing
 
 
 Housekeeping: list, clear, undo
@@ -124,17 +126,17 @@ Housekeeping: list, clear, undo
 
 * ``p list``
 
-  Lists the stack
+  List the stack
 
 * ``p clear``
 
-  Clears the stack
+  Clear the stack
 
 * ``p undo``
 
-  Undoes the previous change to the stack and cds to the top of it
+  Undo the previous change to the stack and cds to the top of it
 
-TIPS:
+Tips:
 -----------
 
 If you want to jump back to the directory you were in before you typed ``p``,
@@ -180,23 +182,20 @@ shortcut but ``p``, ``pp``, and ``ppp`` are too short or already taken.
 
 Q: What new features are expected?
 
-A: None.  Barring bugfixes, I don't expect to change anything.  I am open to
-ideas but it feels complete to me.
+A: None.  Enough is as good as a feast.  (But I am very open to feature requests
+that do not expand the scope of the project excessively.)
 
 Q: Where does ``pppp`` store the the persistent stack?
 
-A: By default, in the directory ``$HOME/.config/`` in the file file
-``.pppp.json``.
-
-Q: What if I want to change the directory for the config file?
-
-A: Set the environment variable ``XDG_CONFIG_HOME`` to your directory.
+A: In a file named ``.pppp.json``, which by default is in the config directory
+``$HOME/.config/``.  To change this config directory, set the environment
+variable ``XDG_CONFIG_HOME``.
 
 Q: What's this XDG thing?
 
 A: `This specification
 <https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html>`_
-for where your config files should go.
+for where your config files should go .
 
 See also `this article <https://0x46.net/thoughts/2019/02/01/dotfile-madness/>`.
 
@@ -207,8 +206,8 @@ A: Pure Python cannot change the directory in your shell - some Bash is needed.
 But doing the whole thing in Bash was too hard.
 
 I could have distributed it as a Python file and a small Bash file but I felt a
-single file was better for everyone, even though it requires a build step (for
-developers only of course).
+single file was better for everyone, even though it's a little more complicated
+behind the scenes.
 
 See also `this discussion
 <https://stackoverflow.com/questions/2375003/how-do-i-set-the-working-directory-of-the-parent-process>`_

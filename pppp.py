@@ -195,6 +195,7 @@ class Projects:
                     _print('pppp:', next_project)
             elif report:
                 _print('pppp: (no change)')
+                self.list()
 
     def _write(self):
         self._config_file.parent.mkdir(parents=True, exist_ok=True)

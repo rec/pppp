@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-06-28 at 15:53:31 by _write_pppp_bash.py
+# Automatically generated on 2019-06-30 at 14:36:54 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -29,7 +29,7 @@ CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', '$HOME/.config')
 
 COMMANDS = 'cd', 'clear', 'list', 'pop', 'push', 'rotate', 'swap', 'undo'
 
-VERSION = '0.9.1'
+VERSION = '0.9.2'
 DESCRIPTION = """\
 🍿 pppp: a tiny bash utility to keep a stack of project directories 🍿
 v%s
@@ -43,6 +43,8 @@ The 'pppp' commands are %s, and %s - you only need to type the first letter.
 
 Passing -q or --quiet to 'pppp'  or setting the environment variable
 'PPPP_QUIET' suppresses all output except errors.
+
+More help is available here:  https://github.com/rec/pppp
 
 Command documentation:
 
@@ -205,6 +207,7 @@ class Projects:
                     _print('pppp:', next_project)
             elif report:
                 _print('pppp: (no change)')
+                self.list()
 
     def _write(self):
         self._config_file.parent.mkdir(parents=True, exist_ok=True)
