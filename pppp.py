@@ -19,7 +19,7 @@ COMMANDS = 'cd', 'clear', 'list', 'pop', 'push', 'rotate', 'swap', 'undo'
 
 VERSION = '0.9.2'
 DESCRIPTION = """\
-🍿 pppp: a tiny bash utility to keep a stack of project directories 🍿
+🍿 pppp: a stack of project directories as a tiny bash utility 🍿
 v%s
 
 'pppp' is a persistent stack of project directories.
@@ -64,8 +64,9 @@ def pppp(*args):
     if _is_int(command):
         return projects.cd(command, *commands)
 
-    if Path(command).is_dir():
-        return projects.push(command, *commands)
+    p = Path(command).resolve()
+    if p.is_dir():
+        return projects.push(p, *commands)
 
     if '.' in command or '/' in command:
         _pexit('Directory', command, 'does not exist')
