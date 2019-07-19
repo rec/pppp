@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-07-19 at 12:21:06 by _write_pppp_bash.py
+# Automatically generated on 2019-07-19 at 13:28:36 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -191,6 +191,8 @@ class Projects:
         if len(self._projects) < 2:
             _pexit('Not enough directories to swap')
         self._projects[0:2] = reversed(self._projects[0:2])
+        self._write()
+        self.cd()
 
     def _cd(self, position, report=True):
         """Go right to a project at a specific position or by default the top
@@ -265,6 +267,7 @@ def _help(command):
 
 
 if __name__ == '__main__':
+    print('XXXXX', file=sys.stderr)
     pppp(*sys.argv[1:])
 
 ___EOF`

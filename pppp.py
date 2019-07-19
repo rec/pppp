@@ -179,6 +179,8 @@ class Projects:
         if len(self._projects) < 2:
             _pexit('Not enough directories to swap')
         self._projects[0:2] = reversed(self._projects[0:2])
+        self._write()
+        self.cd()
 
     def _cd(self, position, report=True):
         """Go right to a project at a specific position or by default the top
