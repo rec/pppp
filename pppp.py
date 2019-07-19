@@ -197,7 +197,7 @@ class Projects:
                 if report:
                     _print('pppp:', next_project)
             elif report:
-                _print('pppp: (no change)')
+                _print('pppp:')
                 self.list()
 
     def _write(self):

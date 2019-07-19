@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-07-19 at 13:28:36 by _write_pppp_bash.py
+# Automatically generated on 2019-07-19 at 13:31:06 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -209,7 +209,7 @@ class Projects:
                 if report:
                     _print('pppp:', next_project)
             elif report:
-                _print('pppp: (no change)')
+                _print('pppp:')
                 self.list()
 
     def _write(self):
@@ -267,7 +267,6 @@ def _help(command):
 
 
 if __name__ == '__main__':
-    print('XXXXX', file=sys.stderr)
     pppp(*sys.argv[1:])
 
 ___EOF`
