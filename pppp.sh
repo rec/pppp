@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-07-27 at 14:02:47 by _write_pppp_bash.py
+# Automatically generated on 2019-07-27 at 14:09:29 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -48,7 +48,11 @@ More help is available here:  https://github.com/rec/pppp
 
 Command documentation:
 
-""" % (VERSION, ', '.join(COMMANDS[:-1]), COMMANDS[-1])
+""" % (
+    VERSION,
+    ', '.join(COMMANDS[:-1]),
+    COMMANDS[-1],
+)
 
 
 def pppp(*args):
@@ -160,7 +164,7 @@ class Projects:
         except Exception:
             pass
         else:
-            _print('This project is', index)
+            _print('pppp: %s is already at position %d' % (project, index))
             self._cd(index)
             return
 

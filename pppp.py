@@ -36,7 +36,11 @@ More help is available here:  https://github.com/rec/pppp
 
 Command documentation:
 
-""" % (VERSION, ', '.join(COMMANDS[:-1]), COMMANDS[-1])
+""" % (
+    VERSION,
+    ', '.join(COMMANDS[:-1]),
+    COMMANDS[-1],
+)
 
 
 def pppp(*args):
@@ -148,8 +152,7 @@ class Projects:
         except Exception:
             pass
         else:
-            _print('pppp: This project is already at position %d in the stack'
-                   % index)
+            _print('pppp: %s is already at position %d' % (project, index))
             self._cd(index)
             return
 
