@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-07-19 at 13:31:06 by _write_pppp_bash.py
+# Automatically generated on 2019-07-27 at 14:02:47 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -129,18 +129,22 @@ class Projects:
         for i, p in enumerate(self._projects):
             _print('%d: %s' % (i, p))
 
-    def pop(self, position=0):
+    def pop(self, *positions):
         """Pop and discard a project"""
         if not self._projects:
             _pexit('pppp: ERROR: No projects to pop!')
+        popped = []
+        ps = set(self._to_pos(p) for p in (positions or [0]))
+        for position in reversed(sorted(ps)):
+            p = self._projects.pop(position)
+            popped.append(p)
 
-        popped = self._projects.pop(self._to_pos(position))
         self._write()
         if self._projects and not position:
             self._cd(0, False)
 
         if self._verbose:
-            _print('pppp: Popped', popped)
+            _print('pppp: Popped', *popped)
             self.list()
 
     def push(self, project):
@@ -151,8 +155,14 @@ class Projects:
         if not project.is_dir():
             _pexit(project, 'is not a directory')
         project = str(project)
-        if project in self._projects:
-            _pexit('Cannot insert the same project twice')
+        try:
+            index = self._projects.index(project)
+        except Exception:
+            pass
+        else:
+            _print('This project is', index)
+            self._cd(index)
+            return
 
         self._projects.insert(0, project)
         self._write()
