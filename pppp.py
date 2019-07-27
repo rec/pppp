@@ -148,7 +148,8 @@ class Projects:
         except Exception:
             pass
         else:
-            _print('This project is', index)
+            _print('pppp: This project is already at position %d in the stack'
+                   % index)
             self._cd(index)
             return
 
