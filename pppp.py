@@ -96,6 +96,11 @@ class Projects:
                 self._projects, self._undo = json.load(fp)
         except FileNotFoundError:
             self._projects, self._undo = [], []
+
+        except Exception:
+            _print('pppp: bad config file: ' + str(self._config_file))
+            self._projects, self._undo = [], []
+
         self._original_projects = self._projects[:]
 
     def clear(self):
@@ -139,28 +144,41 @@ class Projects:
             _print('pppp: Popped', *popped)
             self.list()
 
-    def push(self, project):
+    def push(self, *projects):
         """Push a project directory into the project list."""
-        project = _expand(project)
-        if not project.exists():
-            _pexit('Directory', project, 'does not exist')
-        if not project.is_dir():
-            _pexit(project, 'is not a directory')
-        project = str(project)
-        try:
-            index = self._projects.index(project)
-        except Exception:
-            pass
-        else:
-            _print('pppp: %s is already at position %d' % (project, index))
-            self._cd(index)
-            return
 
-        self._projects.insert(0, project)
+        projects = [_expand(p) for p in projects]
+        errors = []
+
+        nonexistent = [p for p in projects if not p.exists()]
+        if nonexistent:
+            _print('pppp: Non-existent', *nonexistent)
+
+        not_dir = [p for p in projects if p.exists() and not p.is_dir()]
+        if not_dir:
+            _print('pppp: Not a directory', *not_dir)
+
+        if nonexistent or not_dir:
+            _pexit('Failed')
+
+        next_index = 0
+        pushed = []
+        for project in projects:
+            project = str(project)
+            try:
+                index = self._projects.index(project)
+            except Exception:
+                self._projects.insert(0, project)
+                next_index = 0
+                pushed.append(project)
+            else:
+                _print('pppp: %s is already at position %d' % (project, index))
+                next_index = index
+
         self._write()
-        self._cd(0, False)
+        self._cd(next_index, False)
         if self._verbose:
-            _print('pppp: Pushed', project)
+            _print('pppp: Pushed', ', '.join(pushed))
             self.list()
 
     def rotate(self, steps=1):
@@ -216,8 +234,9 @@ class Projects:
 
     def _write(self):
         self._config_file.parent.mkdir(parents=True, exist_ok=True)
+        output = json.dumps([self._projects, self._original_projects])
         with open(str(self._config_file), 'w') as fp:
-            json.dump([self._projects, self._original_projects], fp)
+            fp.write(output)
 
     def _to_pos(self, pos):
         if pos == '-':
