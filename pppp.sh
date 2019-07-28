@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-07-28 at 08:03:49 by _write_pppp_bash.py
+# Automatically generated on 2019-07-28 at 08:43:59 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -72,7 +72,7 @@ def pppp(*args):
     command = commands and commands.pop(0) or ''
     cmd = next((c for c in COMMANDS if c.startswith(command)), None)
     if is_help:
-        return _help(cmd)
+        return _help(command and cmd)
 
     projects = Projects(not is_quiet)
 
@@ -132,6 +132,7 @@ class Projects:
         self._cd(position)
 
     def info(self):
+        """Prints information about pppp itself"""
         _print('config_file:', self._config_file)
         _print('version:', VERSION)
         _print('branch:', _BRANCH)
@@ -270,7 +271,7 @@ class Projects:
 
 
 # These are replaced by _write_pppp_bash.py
-_COMMIT_ID = 'fec0b813ab3ae47a67446ccb684c539a7e21eb54'
+_COMMIT_ID = '1a1cd29932e90a4013e38c0f07cd9f668f8409e1'
 _BRANCH = 'master'
 _UPSTREAM_BRANCH = 'master'
 _UPSTREAM = 'git@github.com:rec/pppp.git'

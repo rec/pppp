@@ -60,7 +60,7 @@ def pppp(*args):
     command = commands and commands.pop(0) or ''
     cmd = next((c for c in COMMANDS if c.startswith(command)), None)
     if is_help:
-        return _help(cmd)
+        return _help(command and cmd)
 
     projects = Projects(not is_quiet)
 
@@ -120,6 +120,7 @@ class Projects:
         self._cd(position)
 
     def info(self):
+        """Prints information about pppp itself"""
         _print('config_file:', self._config_file)
         _print('version:', VERSION)
         _print('branch:', _BRANCH)
