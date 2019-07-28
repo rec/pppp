@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-07-28 at 08:43:59 by _write_pppp_bash.py
+# Automatically generated on 2019-07-28 at 08:53:13 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -211,13 +211,13 @@ class Projects:
            brings the secondmost project to the top.
 
            Rotating by -1 undoes that exactly.  For convenience, you can just
-           type 'pppp rotate -'.
-        """
+           type 'pppp rotate -'."""
         steps = self._to_pos(steps)
         self._projects = self._projects[steps:] + self._projects[:steps]
         self._write()
-        self.cd()
+        self._cd(0, False)
         if self._verbose:
+            _print('pppp: rotated by', steps)
             self.list()
 
     def undo(self):
@@ -235,7 +235,10 @@ class Projects:
             _pexit('Not enough directories to swap')
         self._projects[0:2] = reversed(self._projects[0:2])
         self._write()
-        self.cd()
+        self._cd(0, False)
+        if self._verbose:
+            _print('pppp: swapped')
+            self.list()
 
     def _cd(self, position, report=True):
         """Go right to a project at a specific position or by default the top
@@ -271,7 +274,7 @@ class Projects:
 
 
 # These are replaced by _write_pppp_bash.py
-_COMMIT_ID = '1a1cd29932e90a4013e38c0f07cd9f668f8409e1'
+_COMMIT_ID = '4f22cd960d62f9c9d32b9867b809bf323aa4d1cd'
 _BRANCH = 'master'
 _UPSTREAM_BRANCH = 'master'
 _UPSTREAM = 'git@github.com:rec/pppp.git'

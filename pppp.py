@@ -199,13 +199,13 @@ class Projects:
            brings the secondmost project to the top.
 
            Rotating by -1 undoes that exactly.  For convenience, you can just
-           type 'pppp rotate -'.
-        """
+           type 'pppp rotate -'."""
         steps = self._to_pos(steps)
         self._projects = self._projects[steps:] + self._projects[:steps]
         self._write()
-        self.cd()
+        self._cd(0, False)
         if self._verbose:
+            _print('pppp: rotated by', steps)
             self.list()
 
     def undo(self):
@@ -223,7 +223,10 @@ class Projects:
             _pexit('Not enough directories to swap')
         self._projects[0:2] = reversed(self._projects[0:2])
         self._write()
-        self.cd()
+        self._cd(0, False)
+        if self._verbose:
+            _print('pppp: swapped')
+            self.list()
 
     def _cd(self, position, report=True):
         """Go right to a project at a specific position or by default the top
