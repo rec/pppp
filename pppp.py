@@ -9,7 +9,6 @@ from pathlib import Path
 import inspect
 import json
 import os
-import subprocess
 import sys
 
 PPPP_QUIET_ENV = 'PPPP_QUIET'
@@ -123,22 +122,10 @@ class Projects:
     def info(self):
         _print('config_file:', self._config_file)
         _print('version:', VERSION)
-        commit_id = _git('rev-parse HEAD')
-        if commit_id:
-            _print('commit_id:', commit_id[0])
-        branch = _git('symbolic-ref --short HEAD')
-        if branch:
-            _print('branch:', branch[0])
-
-        upstream = _git('rev-parse --abbrev-ref --symbolic-full-name @{u}')
-        if upstream:
-            remote, ubranch = upstream[0].split('/')
-            for r in _git('remote -v'):
-                rem, address, *_ = r.split()
-                if rem == remote:
-                    _print('upstream_branch:', ubranch)
-                    _print('upstream:', address)
-                    break
+        _print('branch:', _BRANCH)
+        _print('commit_id:', _COMMIT_ID)
+        _print('upstream:', _UPSTREAM)
+        # _print('upstream_branch:', _UPSTREAM_BRANCH)
 
     def list(self):
         """Lists all the projects in order"""
@@ -268,6 +255,13 @@ class Projects:
         if -lp <= pos < lp:
             return pos
         _pexit('Project index', pos, 'out of range [0, %d]' % (lp - 1))
+
+
+# These are replaced by _write_pppp_bash.py
+_COMMIT_ID = '{commit_id}'
+_BRANCH = '{branch}'
+_UPSTREAM_BRANCH = '{upstream_branch}'
+_UPSTREAM = '{upstream}'
 
 
 def _git(cmd):
