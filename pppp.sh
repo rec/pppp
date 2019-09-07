@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-09-07 at 17:33:34 by _write_pppp_bash.py
+# Automatically generated on 2019-09-07 at 17:37:52 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -195,8 +195,11 @@ class Projects:
                 next_index = 0
                 pushed.append(project)
             else:
-                _print('pppp: %s is already at position %d' % (project, index))
-                next_index = index
+                if index:
+                    self._projects.pop(index)
+                    self._projects.insert(0, project)
+
+                next_index = 0
 
         self._write()
         self._cd(next_index, False)
@@ -277,7 +280,7 @@ class Projects:
 
 
 # These are replaced by _write_pppp_bash.py
-_COMMIT_ID = 'fb19739fb7a644d0fa7fd14e44996bfaabfcef2c'
+_COMMIT_ID = '375ca2bb54ec5cfa6b39862c64e632e2d7bd3279'
 _BRANCH = 'master'
 _UPSTREAM_BRANCH = 'master'
 _UPSTREAM = 'git@github.com:rec/pppp.git'

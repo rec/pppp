@@ -183,8 +183,11 @@ class Projects:
                 next_index = 0
                 pushed.append(project)
             else:
-                _print('pppp: %s is already at position %d' % (project, index))
-                next_index = index
+                if index:
+                    self._projects.pop(index)
+                    self._projects.insert(0, project)
+
+                next_index = 0
 
         self._write()
         self._cd(next_index, False)
