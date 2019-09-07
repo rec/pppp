@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-09-07 at 17:37:52 by _write_pppp_bash.py
+# Automatically generated on 2019-09-07 at 17:48:49 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -273,14 +273,22 @@ class Projects:
     def _to_pos(self, pos):
         if pos == '-':
             return -1
-        pos, lp = int(pos), len(self._projects)
+        try:
+            pos = int(pos)
+        except Exception:
+            try:
+                pos = self._projects.index(str(_expand(pos)))
+            except Exception:
+                _pexit('Cannot understand position', pos)
+
+        lp = len(self._projects)
         if -lp <= pos < lp:
             return pos
         _pexit('Project index', pos, 'out of range [0, %d]' % (lp - 1))
 
 
 # These are replaced by _write_pppp_bash.py
-_COMMIT_ID = '375ca2bb54ec5cfa6b39862c64e632e2d7bd3279'
+_COMMIT_ID = '8ab7aac026bd2d0e8c3662797beeeac2b27e5190'
 _BRANCH = 'master'
 _UPSTREAM_BRANCH = 'master'
 _UPSTREAM = 'git@github.com:rec/pppp.git'

@@ -261,7 +261,15 @@ class Projects:
     def _to_pos(self, pos):
         if pos == '-':
             return -1
-        pos, lp = int(pos), len(self._projects)
+        try:
+            pos = int(pos)
+        except Exception:
+            try:
+                pos = self._projects.index(str(_expand(pos)))
+            except Exception:
+                _pexit('Cannot understand position', pos)
+
+        lp = len(self._projects)
         if -lp <= pos < lp:
             return pos
         _pexit('Project index', pos, 'out of range [0, %d]' % (lp - 1))
