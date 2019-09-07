@@ -231,6 +231,10 @@ class Projects:
     def _cd(self, position, report=True):
         """Go right to a project at a specific position or by default the top
            project."""
+        if not self._projects:
+            self.list()
+            return
+
         change = False
         if self._projects:
             next_project = self._projects[self._to_pos(position)]
@@ -243,7 +247,6 @@ class Projects:
                 if report:
                     _print('pppp:', next_project)
             elif report:
-                _print('pppp:')
                 self.list()
 
     def _write(self):

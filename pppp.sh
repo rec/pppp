@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-07-28 at 08:53:13 by _write_pppp_bash.py
+# Automatically generated on 2019-09-07 at 17:33:34 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -243,6 +243,10 @@ class Projects:
     def _cd(self, position, report=True):
         """Go right to a project at a specific position or by default the top
            project."""
+        if not self._projects:
+            self.list()
+            return
+
         change = False
         if self._projects:
             next_project = self._projects[self._to_pos(position)]
@@ -255,7 +259,6 @@ class Projects:
                 if report:
                     _print('pppp:', next_project)
             elif report:
-                _print('pppp:')
                 self.list()
 
     def _write(self):
@@ -274,7 +277,7 @@ class Projects:
 
 
 # These are replaced by _write_pppp_bash.py
-_COMMIT_ID = '4f22cd960d62f9c9d32b9867b809bf323aa4d1cd'
+_COMMIT_ID = 'fb19739fb7a644d0fa7fd14e44996bfaabfcef2c'
 _BRANCH = 'master'
 _UPSTREAM_BRANCH = 'master'
 _UPSTREAM = 'git@github.com:rec/pppp.git'
