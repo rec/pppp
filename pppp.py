@@ -20,14 +20,17 @@ COMMANDS = (
 )
 
 VERSION = '0.9.2'
+ICON = u'\U0001f37f'
 DESCRIPTION = """\
-🍿 pppp: a stack of project directories as a tiny bash utility 🍿
-v%s
+{icon} pppp: a stack of project directories as a tiny bash utility {icon}
+v{version}
 
 'pppp' is a persistent stack of project directories.
 Very useful for people who get interrupted a lot.
 
-The 'pppp' commands are %s, and %s - you only need to type the first letter.
+The 'pppp' commands are {first}, and {rest}.
+
+You only need to type the first letter of any command.
 
 'pppp' with no arguments changes directory to the top of the stack.
 
@@ -38,10 +41,11 @@ More help is available here:  https://github.com/rec/pppp
 
 Command documentation:
 
-""" % (
-    VERSION,
-    ', '.join(COMMANDS[:-1]),
-    COMMANDS[-1],
+""".format(
+    icon=ICON,
+    version=VERSION,
+    first=', '.join(COMMANDS[:-1]),
+    rest=COMMANDS[-1],
 )
 
 
