@@ -5,7 +5,6 @@ pppp: Project Push Pop Project
 Keep a persistent stack of working project directories
 """
 
-from pathlib import Path
 import inspect
 import json
 import os
@@ -74,8 +73,8 @@ def pppp(*args):
     if _is_int(command):
         return projects.cd(command, *commands)
 
-    p = Path(command).resolve()
-    if p.is_dir():
+    p = _expand(command)
+    if os.path.isdir(p):
         return projects.push(p, *commands)
 
     if '.' in command or '/' in command:
@@ -94,7 +93,7 @@ def pppp(*args):
 class Projects:
     def __init__(self, verbose):
         self._verbose = verbose
-        self._config_file = _expand(CONFIG_DIR) / '.pppp.json'
+        self._config_file = '%s/%s' % (_expand(CONFIG_DIR), '.pppp.json')
 
         # self._projects is a stack, with the top element at 0.
         try:
@@ -295,7 +294,8 @@ def _git(cmd):
 
 
 def _expand(p):
-    return Path(os.path.expandvars(p or os.getcwd())).expanduser().absolute()
+    path = os.path.expandvars(p or os.getcwd())
+    return os.path.abspath(os.path.expanduser(path))
 
 
 def _is_int(c):

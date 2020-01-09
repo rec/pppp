@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from pathlib import Path
 import datetime
 import subprocess
@@ -38,7 +40,8 @@ def _replace_git_info(code):
 
 def _git(cmd):
     cmd = ['git'] + cmd.split()
-    return subprocess.check_output(cmd, encoding='utf-8').splitlines()
+    result = subprocess.check_output(cmd).decode('utf-8')
+    return result.splitlines()
 
 
 if __name__ == '__main__':

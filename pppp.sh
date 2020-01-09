@@ -4,11 +4,11 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2019-11-20 at 15:50:24 by _write_pppp_bash.py
+# Automatically generated on 2020-01-09 at 13:46:47 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
-    DIR=`python - $@ <<'___EOF'
+    DIR=`python3 - $@ <<'___EOF'
 
 """
 
@@ -17,7 +17,6 @@ pppp: Project Push Pop Project
 Keep a persistent stack of working project directories
 """
 
-from pathlib import Path
 import inspect
 import json
 import os
@@ -86,8 +85,8 @@ def pppp(*args):
     if _is_int(command):
         return projects.cd(command, *commands)
 
-    p = Path(command).resolve()
-    if p.is_dir():
+    p = _expand(command)
+    if os.path.isdir(p):
         return projects.push(p, *commands)
 
     if '.' in command or '/' in command:
@@ -106,7 +105,7 @@ def pppp(*args):
 class Projects:
     def __init__(self, verbose):
         self._verbose = verbose
-        self._config_file = _expand(CONFIG_DIR) / '.pppp.json'
+        self._config_file = '%s/%s' % (_expand(CONFIG_DIR), '.pppp.json')
 
         # self._projects is a stack, with the top element at 0.
         try:
@@ -292,7 +291,7 @@ class Projects:
 
 
 # These are replaced by _write_pppp_bash.py
-_COMMIT_ID = '899c16881f1e8e00d5dd4ef86ae1b67876a9e33f'
+_COMMIT_ID = '3c39f1320fc2ced45452bfa7ef2be46a5e4aa723'
 _BRANCH = 'master'
 _UPSTREAM_BRANCH = 'master'
 _UPSTREAM = 'git@github.com:rec/pppp.git'
@@ -307,7 +306,8 @@ def _git(cmd):
 
 
 def _expand(p):
-    return Path(os.path.expandvars(p or os.getcwd())).expanduser().absolute()
+    path = os.path.expandvars(p or os.getcwd())
+    return os.path.abspath(os.path.expanduser(path))
 
 
 def _is_int(c):
