@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2020-01-09 at 13:46:47 by _write_pppp_bash.py
+# Automatically generated on 2020-01-18 at 16:27:37 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -256,7 +256,7 @@ class Projects:
         change = False
         if self._projects:
             next_project = self._projects[self._to_pos(position)]
-            if next_project != os.getcwd():
+            if next_project != _getcwd():
                 print(next_project)
                 change = True
 
@@ -291,7 +291,7 @@ class Projects:
 
 
 # These are replaced by _write_pppp_bash.py
-_COMMIT_ID = '3c39f1320fc2ced45452bfa7ef2be46a5e4aa723'
+_COMMIT_ID = 'c9c0d753336c4fb59c98e87f550a68d8bd04a38e'
 _BRANCH = 'master'
 _UPSTREAM_BRANCH = 'master'
 _UPSTREAM = 'git@github.com:rec/pppp.git'
@@ -300,13 +300,13 @@ _UPSTREAM = 'git@github.com:rec/pppp.git'
 def _git(cmd):
     cmd = ['git'] + cmd.split()
     try:
-        return subprocess.check_output(cmd, encoding='utf-8').splitlines()
+        return subprocess.check_output(cmd).decode('utf-8').splitlines()
     except Exception as e:
         return []
 
 
 def _expand(p):
-    path = os.path.expandvars(p or os.getcwd())
+    path = os.path.expandvars(p or _getcwd())
     return os.path.abspath(os.path.expanduser(path))
 
 
@@ -344,6 +344,15 @@ def _help(command):
         for line in method.__doc__.splitlines():
             _print('   ', line.replace(11 * ' ', ''))
         _print()
+
+
+def _getcwd():
+    try:
+        return os.getcwd()
+    except Exception:
+        if not True:
+            raise
+        return ''
 
 
 if __name__ == '__main__':

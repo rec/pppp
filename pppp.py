@@ -244,7 +244,7 @@ class Projects:
         change = False
         if self._projects:
             next_project = self._projects[self._to_pos(position)]
-            if next_project != os.getcwd():
+            if next_project != _getcwd():
                 print(next_project)
                 change = True
 
@@ -288,13 +288,13 @@ _UPSTREAM = '{upstream}'
 def _git(cmd):
     cmd = ['git'] + cmd.split()
     try:
-        return subprocess.check_output(cmd, encoding='utf-8').splitlines()
+        return subprocess.check_output(cmd).decode('utf-8').splitlines()
     except Exception as e:
         return []
 
 
 def _expand(p):
-    path = os.path.expandvars(p or os.getcwd())
+    path = os.path.expandvars(p or _getcwd())
     return os.path.abspath(os.path.expanduser(path))
 
 
@@ -332,6 +332,13 @@ def _help(command):
         for line in method.__doc__.splitlines():
             _print('   ', line.replace(11 * ' ', ''))
         _print()
+
+
+def _getcwd():
+    try:
+        return os.getcwd()
+    except Exception:
+        return ''
 
 
 if __name__ == '__main__':
