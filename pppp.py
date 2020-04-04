@@ -1,5 +1,4 @@
 """
-
 pppp: Project Push Pop Project
 
 Keep a persistent stack of working project directories
@@ -164,11 +163,12 @@ class Projects:
         projects = [_expand(p) for p in projects]
         errors = []
 
-        nonexistent = [p for p in projects if not p.exists()]
+        nonexistent = [p for p in projects if not os.path.exists(p)]
         if nonexistent:
             _print('pppp: Non-existent', *nonexistent)
 
-        not_dir = [p for p in projects if p.exists() and not p.is_dir()]
+        exists = [p for p in projects if os.path.exists(p)]
+        not_dir = [p for p in exists if not os.path.isdir(p)]
         if not_dir:
             _print('pppp: Not a directory', *not_dir)
 
@@ -256,7 +256,8 @@ class Projects:
                 self.list()
 
     def _write(self):
-        self._config_file.parent.mkdir(parents=True, exist_ok=True)
+        parent = os.path.dirname(self._config_file)
+        os.makedirs(parent, exist_ok=True)
         output = json.dumps([self._projects, self._original_projects])
         with open(str(self._config_file), 'w') as fp:
             fp.write(output)

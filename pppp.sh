@@ -4,7 +4,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# Automatically generated on 2020-01-18 at 16:27:37 by _write_pppp_bash.py
+# Automatically generated on 2020-04-04 at 22:05:51 by _write_pppp_bash.py
 # from file pppp.py
 
 pppp() {
@@ -176,11 +176,12 @@ class Projects:
         projects = [_expand(p) for p in projects]
         errors = []
 
-        nonexistent = [p for p in projects if not p.exists()]
+        nonexistent = [p for p in projects if not os.path.exists(p)]
         if nonexistent:
             _print('pppp: Non-existent', *nonexistent)
 
-        not_dir = [p for p in projects if p.exists() and not p.is_dir()]
+        exists = [p for p in projects if os.path.exists(p)]
+        not_dir = [p for p in exists if not os.path.isdir(p)]
         if not_dir:
             _print('pppp: Not a directory', *not_dir)
 
@@ -268,7 +269,8 @@ class Projects:
                 self.list()
 
     def _write(self):
-        self._config_file.parent.mkdir(parents=True, exist_ok=True)
+        parent = os.path.dirname(self._config_file)
+        os.makedirs(parent, exist_ok=True)
         output = json.dumps([self._projects, self._original_projects])
         with open(str(self._config_file), 'w') as fp:
             fp.write(output)
@@ -291,7 +293,7 @@ class Projects:
 
 
 # These are replaced by _write_pppp_bash.py
-_COMMIT_ID = 'c9c0d753336c4fb59c98e87f550a68d8bd04a38e'
+_COMMIT_ID = '2e6566d37af9b409c21dd4222b7a4e939189d224'
 _BRANCH = 'master'
 _UPSTREAM_BRANCH = 'master'
 _UPSTREAM = 'git@github.com:rec/pppp.git'
@@ -350,8 +352,6 @@ def _getcwd():
     try:
         return os.getcwd()
     except Exception:
-        if not True:
-            raise
         return ''
 
 
