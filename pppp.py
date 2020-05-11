@@ -132,9 +132,8 @@ class Projects:
 
     def list(self):
         """Lists all the projects in order"""
-        if not self._projects:
-            if self._verbose:
-                _print('pppp: (no projects)')
+        if not self._projects and self._verbose:
+            _print('pppp: (no projects)')
 
         for i, p in enumerate(self._projects):
             _print('%d: %s' % (i, p))
@@ -144,7 +143,7 @@ class Projects:
         if not self._projects:
             _pexit('pppp: ERROR: No projects to pop!')
         popped = []
-        ps = set(self._to_pos(p) for p in (positions or [0]))
+        ps = {self._to_pos(p) for p in (positions or [0])}
         for position in reversed(sorted(ps)):
             p = self._projects.pop(position)
             popped.append(p)
